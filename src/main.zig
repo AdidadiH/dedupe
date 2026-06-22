@@ -36,11 +36,18 @@ pub fn main(init: std.process.Init) !void {
     var src_reader = srcFile.reader(init.io, &src_file_buffer);
 
     {
-        //NOTE: temporary, only for testing that it works
+        //Scan each line and leave out duplicates
         var line_no: usize = 0;
+        var prev_line: []u8 = undefined;
         while (try src_reader.interface.takeDelimiter('\n')) |line| {
             line_no += 1;
-            std.debug.print("{d}--{s}\n", .{ line_no, line });
+
+            const prevLine: []u8 = prev_line;
+            if (std.mem.eql(u8, prevLine, line) == false) {
+                std.debug.print("{s}\n", .{line});
+            }
+
+            prev_line = line;
         }
     }
 }
