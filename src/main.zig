@@ -47,7 +47,7 @@ pub fn main(init: std.process.Init) !void {
             if (prev_line) |p_line| {
                 const prevLine: []u8 = p_line;
                 if (!std.mem.eql(u8, prevLine, line)) {
-                    std.debug.print("{d: >5} |{d: >3}x| {s}\n", .{ line_no, duplicates, p_line });
+                    std.debug.print("{d: >5} |{d: >3}x| {s}\n", .{ line_no - duplicates + 1, duplicates, p_line });
                     duplicates = 1;
                 } else {
                     duplicates += 1;
