@@ -38,15 +38,23 @@ pub fn main(init: std.process.Init) !void {
     {
         //Scan each line and leave out duplicates
         var line_no: usize = 0;
-        var prev_line: []u8 = undefined;
+        var duplicates: u16 = 1;
+        var prev_line: ?[]u8 = try src_reader.interface.takeDelimiter('\n');
+        if (prev_line == null) return;
         while (try src_reader.interface.takeDelimiter('\n')) |line| {
             line_no += 1;
 
-            const prevLine: []u8 = prev_line;
-            if (std.mem.eql(u8, prevLine, line) == false) {
-                std.debug.print("{s}\n", .{line});
+            if (prev_line) |p_line| {
+                const prevLine: []u8 = p_line;
+                if (!std.mem.eql(u8, prevLine, line)) {
+                    std.debug.print("{d: >5} |{d: >3}x| {s}\n", .{ line_no, duplicates, p_line });
+                    duplicates = 1;
+                } else {
+                    duplicates += 1;
+                }
+            } else {
+                return;
             }
-
             prev_line = line;
         }
     }
